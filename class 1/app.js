@@ -9,10 +9,6 @@ const filePath = path.join(process.cwd(), "data.json");
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/html");
-    if (req.url === "/") {
-        res.end("<h1>Home Page!</h1>");
-        return;
-    }
     if (req.url === "/" && req.method === "POST") {
         let data = '';
         req.on("data", (chunk) => {
@@ -31,6 +27,18 @@ const server = http.createServer((req, res) => {
                 }
 
                 const jsonData = JSON.parse(fileData);
+
+                const foundUser = jsonData.users.filter((user) => {
+                    return user.username == parsedData.username && user.password == parsedData.password;
+                })
+
+                if (foundUser.length > 0) {
+                    res.end("<h1>Home Page!</h1>");
+                    return;
+                } else {
+                    res.writeHead(302, { 'Location': '/login' });
+                    res.end();
+                }
             })
         })
     }
