@@ -13,6 +13,27 @@ const server = http.createServer((req, res) => {
         res.end("<h1>Home Page!</h1>");
         return;
     }
+    if (req.url === "/" && req.method === "POST") {
+        let data = '';
+        req.on("data", (chunk) => {
+            data += chunk;
+        })
+
+        req.on("end", () => {
+            const parsedData = queryString.parse(data);
+
+            fs.readFile(filePath, (err, fileData) => {
+                if (err) {
+                    console.error(err);
+                    res.writeHead(500, { 'Content-Type': 'text/plain' });
+                    res.end("Internal Server Error");
+                    return;
+                }
+
+                const jsonData = JSON.parse(fileData);
+            })
+        })
+    }
 
     if (req.url === "/signup") {
         res.end(`
@@ -59,7 +80,7 @@ const server = http.createServer((req, res) => {
                         username: parsedData.username,
                         password: parsedData.password
                     };
-                    
+
                     jsonData.users.push(newUser);
 
                     fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), (err) => {
@@ -80,6 +101,23 @@ const server = http.createServer((req, res) => {
                 res.end("Passwords do not match.");
             }
         });
+        return;
+    }
+
+    if (req.url === "/login") {
+        res.end(`
+        <form action="/" method="POST">
+            <div>
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username" />
+            </div>
+            <div>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password" />
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        `);
         return;
     }
 });
