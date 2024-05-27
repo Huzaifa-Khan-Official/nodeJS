@@ -2,6 +2,8 @@ const http = require("node:http");
 const fs = require("fs");
 const queryString = require('node:querystring');
 const path = require("node:path");
+const bcrypt = require('bcrypt');
+
 
 const PORT = 3000;
 const filePath = path.join(process.cwd(), "data.json");
@@ -18,7 +20,7 @@ const server = http.createServer((req, res) => {
         req.on("end", () => {
             const parsedData = queryString.parse(data);
 
-            fs.readFile(filePath, (err, fileData) => {
+            fs.readFile(filePath, async (err, fileData) => {
                 if (err) {
                     console.error(err);
                     res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -28,16 +30,16 @@ const server = http.createServer((req, res) => {
 
                 const jsonData = JSON.parse(fileData);
 
-                const foundUser = jsonData.users.filter((user) => {
-                    return user.username == parsedData.username && user.password == parsedData.password;
-                })
+                // const foundUser = jsonData.users.filter((user) => {
+                //     return user.username == parsedData.username && bcrypt.compare(parsedData.password, user.password);
+                //     // return user.username == parsedData.username && user.password == parsedData.password;
+                // })
 
                 if (foundUser.length > 0) {
                     res.end("<h1>Home Page!</h1>");
                     return;
                 } else {
-                    res.writeHead(302, { 'Location': '/login' });
-                    res.end();
+                    res.end("<h1>Invalid Credentials</h1>")
                 }
             })
         })
@@ -74,7 +76,7 @@ const server = http.createServer((req, res) => {
             const parsedData = queryString.parse(data);
 
             if (parsedData.password === parsedData.confirmPassword) {
-                fs.readFile(filePath, (err, fileData) => {
+                fs.readFile(filePath, async (err, fileData) => {
                     if (err) {
                         console.error(err);
                         res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -83,10 +85,16 @@ const server = http.createServer((req, res) => {
                     }
 
                     const jsonData = JSON.parse(fileData);
+
+                    const saltRounds = 10;
+                    const plainPasswrod = parsedData.password;
+
+                    const encryptPassword = await bcrypt.hash(plainPasswrod, saltRounds);
+
                     const newUser = {
                         id: jsonData.users.length + 1,
                         username: parsedData.username,
-                        password: parsedData.password
+                        password: encryptPassword
                     };
 
                     jsonData.users.push(newUser);
