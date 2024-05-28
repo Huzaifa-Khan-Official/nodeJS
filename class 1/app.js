@@ -30,12 +30,10 @@ const server = http.createServer((req, res) => {
 
                 const jsonData = JSON.parse(fileData);
 
-                // const foundUser = jsonData.users.filter((user) => {
-                //     return user.username == parsedData.username && bcrypt.compare(parsedData.password, user.password);
-                //     // return user.username == parsedData.username && user.password == parsedData.password;
-                // })
+                const foundUser = jsonData.users.filter((user) => user.username == parsedData.username);
+                const isUser = await bcrypt.compare(parsedData.password, foundUser[0].password)
 
-                if (foundUser.length > 0) {
+                if (isUser) {
                     res.end("<h1>Home Page!</h1>");
                     return;
                 } else {

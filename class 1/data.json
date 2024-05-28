@@ -11,14 +11,14 @@
       "password": "123"
     },
     {
-      "id": 3,
-      "username": "noman",
-      "password": "123"
-    },
-    {
       "id": 4,
       "username": "jam",
       "password": "$2b$10$XoTSf8jJfpo88azr/BdwGOm7eglWzPEmB42SAIHUB4WpHYejdL6kO"
+    },
+    {
+      "id": 4,
+      "username": "noman",
+      "password": "$2b$10$0nA6Mw.mnkFeQ2sXfz/qbOue8glAGs2miPdVr2iFUry4gA4cBFJda"
     }
   ]
 }
