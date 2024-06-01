@@ -11,5 +11,4 @@ const corsConfig = {
     }
 }
 
-// export { corsConfig }
 export default corsConfig
