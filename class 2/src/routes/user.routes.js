@@ -3,7 +3,7 @@ import { login, signup } from '../controllers/user.controller.js';
 
 const route = express.Router();
 
-route.get("/signup", signup)
-route.get("/login", login)
+route.post("/signup", signup)
+route.post("/login", login)
 
 export { route }
