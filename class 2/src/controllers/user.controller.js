@@ -1,9 +1,9 @@
 const login = async (req, res) => {
-    res.send("login")
+    res.send("login api is called!")
 }
 
 const signup = async (req, res) => {
-    res.send("signup")
+    res.send("signup api is called!")
 }
 
 export { login, signup }
