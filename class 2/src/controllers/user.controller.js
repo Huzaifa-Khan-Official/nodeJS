@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import bcrypt from "bcrypt";
 
 const { user: User } = db;
 
@@ -10,12 +11,21 @@ const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        const newUser = new User({ username, email, password });
+        // finding email
+        const findEmail = await User.findOne({ email: email });
+        if (findEmail) return res.send("Email already in use");
+
+        // saving user in database
+        const payload = {
+            username,
+            email,
+            password
+        }
+
+        const newUser = new User({...payload});
         const user = await newUser.save();
 
-        res.send("user ==>", user);
-
-        res.send("signup api is called!")
+        res.send("user is signed up successfully!")
     } catch (error) {
         console.log("error ==>", error);
         res.send("Something went wrong!");
