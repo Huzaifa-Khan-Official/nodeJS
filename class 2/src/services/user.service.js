@@ -1,6 +1,6 @@
 import db from "../models/index.js";
 
-const { user: User } = db;
+const { user: User, token: Token } = db;
 const findByEmail = async (email) => {
     try {
         const user = await User.findOne({ email: email });
@@ -21,4 +21,14 @@ const createUser = async (payload) => {
     }
 }
 
-export { findByEmail, createUser }
+const saveToken = async (payload) => {
+    try {
+        const newToken = new Token({ ...payload });
+        const token = await newToken.save();
+        return token;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { findByEmail, createUser, saveToken }

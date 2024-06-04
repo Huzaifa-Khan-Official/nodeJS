@@ -1,7 +1,9 @@
-import db from "../models/index.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
+import db from "../models/index.js";
 import { compareHash, createHash } from "../utils/hash.util.js";
-import { createUser, findByEmail } from "../services/user.service.js";
+import { createUser, findByEmail, saveToken } from "../services/user.service.js";
+import serverConfig from "../configs/server.config.js";
 
 const { user: User } = db;
 
@@ -13,9 +15,14 @@ const login = async (req, res) => {
         if (!user) return res.status(404).send({ message: "Invalid credentials", data: null });
 
         const passwordMatch = await compareHash(password, user.password)
+
         if (!passwordMatch) return res.status(500).json({ message: "Invalid credentials", data: null });
 
-        res.send("user found!")
+        const token = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "1h" })
+
+        const generateToken = await saveToken({ token, user: user.id })
+
+        res.status(200).json({ message: "Login successful", data: { token: generateToken.token } })
     } catch (error) {
         res.status(404).send({ message: "Internal error", error: error })
     }
