@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import bcrypt from "bcrypt";
+import { createHash } from "../utils/hash.util.js";
 
 const { user: User } = db;
 
@@ -15,11 +16,13 @@ const signup = async (req, res) => {
         const findEmail = await User.findOne({ email: email });
         if (findEmail) return res.send("Email already in use");
 
+        const hashedPassword = await createHash(password);
+
         // saving user in database
         const payload = {
             username,
             email,
-            password
+            password: hashedPassword
         }
 
         const newUser = new User({...payload});
