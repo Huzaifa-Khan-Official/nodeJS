@@ -5,4 +5,9 @@ const createHash = async (plainText) => {
     return hash
 }
 
-export { createHash}
+const compareHash = async (plainText, hash) => {
+    const isMatch = await bcrypt.compare(plainText, hash)
+    return isMatch
+}
+
+export { createHash, compareHash }
