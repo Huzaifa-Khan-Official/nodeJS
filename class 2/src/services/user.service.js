@@ -31,4 +31,22 @@ const saveToken = async (payload) => {
     }
 }
 
-export { findByEmail, createUser, saveToken }
+const getTokenByUID = async (uid) => {
+    try {
+        const response = await Token.find({ user: uid })
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const deleteTokenByUID = async (uid) => {
+    try {
+        const response = await Token.deleteMany({ user: uid })
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { findByEmail, createUser, saveToken, getTokenByUID, deleteTokenByUID }

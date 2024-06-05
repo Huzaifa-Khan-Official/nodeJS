@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import db from "../models/index.js";
 import { compareHash, createHash } from "../utils/hash.util.js";
-import { createUser, findByEmail, saveToken } from "../services/user.service.js";
+import { createUser, deleteTokenByUID, findByEmail, getTokenByUID, saveToken } from "../services/user.service.js";
 import serverConfig from "../configs/server.config.js";
 
 const { user: User } = db;
@@ -12,7 +12,10 @@ const login = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await findByEmail(email);
-        if (!user) return res.status(404).send({ message: "Invalid credentials", data: null });
+        if (!user) return res.status(404).send({ message: "User not found!", data: null });
+
+        const isAlreadyLoggedIn = await getTokenByUID(user.id);
+        if (isAlreadyLoggedIn?.length > 0) return res.status(500).json({ success: false, message: "Already logged in", data: null });
 
         const passwordMatch = await compareHash(password, user.password)
 
@@ -54,4 +57,16 @@ const signup = async (req, res) => {
     }
 }
 
-export { login, signup }
+const logout = async (req, res) => {
+    try {
+        const { uid } = req.body;
+        const logoutUser = await deleteTokenByUID(uid);
+        if (logoutUser.deletedCount === 0) return res.status(500).json({ success: false, message: "already logged out!", data: null })
+
+        res.status(200).json({ status: true, message: "successfully logged out!", data: null })
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Internal Server Error", error: error })
+    }
+}
+
+export { login, signup, logout }

@@ -8,7 +8,7 @@ const TokenSchema = new Schema({
         required: true
     },
     user: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true
     }
