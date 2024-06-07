@@ -1,0 +1,7 @@
+const DB_RETRY_LIMIT = 3;
+const DB_RETRY_TIMEOUT = 4000;
+
+export {
+    DB_RETRY_LIMIT,
+    DB_RETRY_TIMEOUT,
+}

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import db from "../models/index.js";
 import { compareHash, createHash } from "../utils/hash.util.js";
-import { createUser, deleteTokenByUID, findByEmail, getTokenByUID, saveToken } from "../services/user.service.js";
+import { createUser, deleteTokenByUID, findByEmail, getTokenByUID, saveToken, updateUserByEmail } from "../services/user.service.js";
 import serverConfig from "../configs/server.config.js";
 
 const { user: User } = db;
@@ -13,6 +13,8 @@ const login = async (req, res) => {
 
         const user = await findByEmail(email);
         if (!user) return res.status(404).send({ message: "User not found!", data: null });
+
+        if (!user.isActive) return res.status(500).json({ success: false, message: "Please verify your accound first!", data: null });
 
         const isAlreadyLoggedIn = await getTokenByUID(user.id);
         if (isAlreadyLoggedIn?.length > 0) return res.status(500).json({ success: false, message: "Already logged in", data: null });
@@ -69,4 +71,22 @@ const logout = async (req, res) => {
     }
 }
 
-export { login, signup, logout }
+const verifyOtp = async (req, res) => {
+    try {
+
+        const { email, otp } = req.body;
+        const user = await findByEmail(email);
+        if (!user) return res.status(404).send({ message: "User not found!", data: null });
+
+        if (user.otp !== otp) return res.status(404).send({ success: false, message: "Invalid otp", data: null });
+
+        const response = await updateUserByEmail(user.email)
+
+        return res.status(200).send({ success: true, message: "Otp varified" })
+
+    } catch (error) {        
+        return res.status(500).json({ success: false, message: "Internal server error", data: null })
+    }
+}
+
+export { login, signup, logout, verifyOtp }

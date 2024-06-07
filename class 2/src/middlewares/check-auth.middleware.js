@@ -11,7 +11,6 @@ const checkAuth = (req, res, next) => {
         })
 
         const isValid = jwt.verify(token.slice(7), serverConfig.jwtSecretKey)
-        console.log("isValid ==>", isValid);
         next();
     } catch (error) {
         res.status(401).json({ success: false, message: "Unauthorized", error: error })

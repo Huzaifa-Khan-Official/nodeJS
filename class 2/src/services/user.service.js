@@ -49,4 +49,17 @@ const deleteTokenByUID = async (uid) => {
     }
 }
 
-export { findByEmail, createUser, saveToken, getTokenByUID, deleteTokenByUID }
+const updateUserByEmail = async (email) => {
+    try {
+        const response = await User.updateOne(
+            { email: email },
+            { isActive: true },
+        )
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { findByEmail, createUser, saveToken, getTokenByUID, deleteTokenByUID, updateUserByEmail }
