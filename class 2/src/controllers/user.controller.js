@@ -23,11 +23,12 @@ const login = async (req, res) => {
 
         if (!passwordMatch) return res.status(500).json({ message: "Invalid credentials", data: null });
 
-        const token = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "1h" })
+        const accessToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "5m" })
+        const refreshToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtRefreshSecretKey, { expiresIn: "7d" })
 
-        const generateToken = await saveToken({ token, user: user.id })
+        const saveToken = await saveToken({ token: refreshToken, user: user.id })
 
-        res.status(200).json({ message: "Login successful", data: { token: generateToken.token } })
+        res.status(200).json({ message: "Login successful", data: { accessToken, refreshToken } })
     } catch (error) {
         res.status(404).send({ message: "Internal error", error: error })
     }
@@ -84,9 +85,37 @@ const verifyOtp = async (req, res) => {
 
         return res.status(200).send({ success: true, message: "Otp varified" })
 
-    } catch (error) {        
+    } catch (error) {
         return res.status(500).json({ success: false, message: "Internal server error", data: null })
     }
 }
 
-export { login, signup, logout, verifyOtp }
+const refreshToken = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        if (!token) return res.status(401).json({ success: false, message: "Refresh is required!" });
+
+        const decoded = jwt.verify(token, serverConfig.jwtRefreshSecretKey);
+        const user = await findByEmail(decoded.email);
+        if (!user) return res.status(404).json({ success: false, message: "User not found!" });
+
+        const existingToken = await getTokenByUID(user.id);
+        if (!existingToken) return res.status(403).json({ success: false, message: "Invalid Token!" });
+
+        const newAccessToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "5m" })
+        const newRefreshToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtRefreshSecretKey, { expiresIn: "7d" })
+
+        const saveToken = await saveToken({ token: newRefreshToken, user: user.id })
+
+        return res.status(200).json({ success: true, message: "Token refreshed", data: { accessToken: newAccessToken, refreshToken: newRefreshToken } })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error
+        });
+    }
+}
+
+export { login, signup, logout, verifyOtp, refreshToken }
