@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import db from "../models/index.js";
 import { compareHash, createHash } from "../utils/hash.util.js";
@@ -26,7 +25,7 @@ const login = async (req, res) => {
         const accessToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "5m" })
         const refreshToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtRefreshSecretKey, { expiresIn: "7d" })
 
-        const saveToken = await saveToken({ token: refreshToken, user: user.id })
+        const saveTokenResponse = await saveToken({ token: refreshToken, user: user.id })
 
         res.status(200).json({ message: "Login successful", data: { accessToken, refreshToken } })
     } catch (error) {
@@ -106,7 +105,7 @@ const refreshToken = async (req, res) => {
         const newAccessToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtSecretKey, { expiresIn: "5m" })
         const newRefreshToken = jwt.sign({ email: user.email, username: user.username }, serverConfig.jwtRefreshSecretKey, { expiresIn: "7d" })
 
-        const saveToken = await saveToken({ token: newRefreshToken, user: user.id })
+        const saveTokenRes = await saveToken({ token: newRefreshToken, user: user.id })
 
         return res.status(200).json({ success: true, message: "Token refreshed", data: { accessToken: newAccessToken, refreshToken: newRefreshToken } })
     } catch (error) {
