@@ -1,9 +1,12 @@
-import express from "express";
-import checkAuth from "../middlewares/check-auth.middleware.js";
-import { createTodo } from "../services/todo.service.js";
+const createTodo = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true, message: 'Todo created successfully!',
+            data: null
+        })
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Something went wrong!", data: null });
+    }
+}
 
-const route = express.Router();
-
-route.post("/create-todo", checkAuth, createTodo);
-
-export { route as todoRoute };
+export { createTodo }
