@@ -9,4 +9,4 @@ route.post("/logout", logout)
 route.post("/refresh-token", refreshToken)
 route.post("/verify-otp", verifyOtp)
 
-export { route }
+export { route as userRoute }

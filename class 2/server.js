@@ -2,9 +2,10 @@ import express from "express";
 import cors from 'cors'
 import mongoose from "mongoose";
 import serverConfig from "./src/configs/server.config.js";
-import { route as userRouter } from "./src/routes/user.routes.js";
-import { todoRoute } from "./src/controllers/todo.controller.js";
 import { DB_RETRY_LIMIT, DB_RETRY_TIMEOUT } from "./src/constants/constants.js";
+import { todoRoute } from "./src/routes/todo.routes.js";
+import { cronRoute } from "./src/routes/cron.routes.js";
+import { userRoute } from "./src/routes/user.routes.js";
 
 const app = express();
 const PORT = serverConfig.PORT;
@@ -35,9 +36,9 @@ async function connectToDB() {
 
         app.use(cors());
         app.use(express.json());
-        app.use("/user", userRouter)
+        app.use("/user", userRoute)
         app.use("/todo", todoRoute)
-        app.use("/cron", )
+        app.use("/cron", cronRoute)
 
     } catch (error) {
         console.log("couldn't connect to database ==>", error);

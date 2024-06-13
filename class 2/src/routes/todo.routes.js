@@ -6,4 +6,4 @@ const route = express.Router();
 
 route.post("/create-todo", checkAuth, createTodo);
 
-export { route as todoRoute };
+export { route as todoRoute  };

@@ -6,3 +6,5 @@ const route = express.Router();
 
 route.post("/start-job", startJob)
 route.post("/stop-job", stopJob)
+
+export { route as cronRoute }
