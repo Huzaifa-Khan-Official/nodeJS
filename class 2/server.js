@@ -6,6 +6,8 @@ import { DB_RETRY_LIMIT, DB_RETRY_TIMEOUT } from "./src/constants/constants.js";
 import { todoRoute } from "./src/routes/todo.routes.js";
 import { cronRoute } from "./src/routes/cron.routes.js";
 import { userRoute } from "./src/routes/user.routes.js";
+import { dummyJob1 } from "./src/jobs/dummy1.job.js";
+import { dummyJob2 } from "./src/jobs/dummy2.job.js";
 
 const app = express();
 const PORT = serverConfig.PORT;
@@ -36,6 +38,8 @@ async function connectToDB() {
 
         app.use(cors());
         app.use(express.json());
+        dummyJob1.stop();
+        dummyJob2.stop();
         app.use("/user", userRoute)
         app.use("/todo", todoRoute)
         app.use("/cron", cronRoute)
