@@ -10,7 +10,13 @@ const TodoSchema = new Schema({
     isCompleted: {
         type: Boolean,
         default: false
-    }
+    },
+
+    // 2nd way
+    // todoCid: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "todo",
+    // }
 }, { timestamps: true })
 
 const TodoItemsModel = mongoose.model("todoItem", TodoSchema)

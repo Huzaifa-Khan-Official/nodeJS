@@ -3,22 +3,24 @@ import mongoose from "mongoose";
 const { Schema, Collection } = mongoose
 
 const TodoSchema = new Schema({
-    title: {
+    categoryName: {
         type: String,
         required: true
     },
-    description: {
-        type: String,
-        required: true
-    },
-    completed: {
+    isCompleted: {
         type: Boolean,
         default: false
     },
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: "user",
-    }
+    },
+    todoList: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "todoItem",
+        }
+    ]
 }, { timestamps: true })
 
 const TodoModel = mongoose.model("todo", TodoSchema)
