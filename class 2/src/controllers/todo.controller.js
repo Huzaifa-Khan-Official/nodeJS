@@ -1,11 +1,10 @@
-import { createTodoCategory, createTodoListItems, getTodoCategoryById } from "../services/todo.service.js";
+import { createTodoCategoryService, createTodoListItem, getTodoCategoryById } from "../services/todo.service.js";
 
-const createTodo = async (req, res) => {
+const createTodoCategory = async (req, res) => {
     try {
-
         const { title, uid } = req.body;
 
-        const createTodoResponse = await createTodoCategory({ title, uid })
+        const createTodoResponse = await createTodoCategoryService({ title, uid })
 
         res.status(200).json({
             success: true, message: 'Todo created successfully!',
@@ -16,7 +15,7 @@ const createTodo = async (req, res) => {
     }
 }
 
-const getTodoItem = async (req, res) => {
+const getTodoCategory = async (req, res) => {
     try {
 
         const { todoId } = req.params;
@@ -32,12 +31,12 @@ const getTodoItem = async (req, res) => {
     }
 }
 
-const createTodoListItem = async (req, res) => {
+const createTodo = async (req, res) => {
     try {
         const { todoId } = req.params;
         const { todo } = req.body;
 
-        const response = await createTodoListItems({ todo })
+        const response = await createTodoListItem({ todo })
 
         const getTodoCategory = await getTodoCategoryById(todoId);
         if (!getTodoCategory) return res.status(500).json({ success: false, message: `Todo category by ${todoId} not found `, data: null });
@@ -54,4 +53,4 @@ const createTodoListItem = async (req, res) => {
     }
 }
 
-export { createTodo, getTodoItem, createTodoListItem }
+export { createTodoCategory, getTodoCategory, createTodo }

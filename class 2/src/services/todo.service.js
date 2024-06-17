@@ -2,7 +2,7 @@ import db from "../models/index.js ";
 
 const { todo: Todo, todoItem: TodoItems } = db;
 
-const createTodoCategory = async (data) => {
+const createTodoCategoryService = async (data) => {
     try {
         const newTodo = new Todo({ categoryName: data.title, createdBy: data.uid });
 
@@ -22,7 +22,7 @@ const getTodoCategoryById = async (todoId) => {
     }
 }
 
-const createTodoListItems = async (data) => {
+const createTodoListItem = async (data) => {
     try {
         const newTodoListItem = new TodoItems({ ...data });
 
@@ -34,4 +34,4 @@ const createTodoListItems = async (data) => {
     }
 }
 
-export { getTodoCategoryById, createTodoCategory, createTodoListItems }
+export { getTodoCategoryById, createTodoCategoryService, createTodoListItem }
