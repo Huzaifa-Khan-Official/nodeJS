@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { generateOtp } from "../utils/randomString.util.js";
 import { sendEmail } from "../services/mail.service.js";
 import { text } from "express";
+import emailQueue from "../Queues/index.js";
 
 
 const { Schema } = mongoose;
@@ -31,12 +32,20 @@ const userSchema = new Schema({
 userSchema.pre("save", function (next) {
     if (!this.otp) {
         this.otp = generateOtp()
-        sendEmail({
+
+        const payload = {
             to: this.email,
             subject: "Account Verification OTP",
             text: `Your account verification token is ${this.otp}`
-        }).then(res => console.log(`Successfully sending emial to ${this.email}`))
-            .catch(err => console.log(`Error sending emial to ${this.email}`))
+        }
+
+        emailQueue.add({ ...payload });
+        // sendEmail({
+        //     to: this.email,
+        //     subject: "Account Verification OTP",
+        //     text: `Your account verification token is ${this.otp}`
+        // }).then(res => console.log(`Successfully sending emial to ${this.email}`))
+        //     .catch(err => console.log(`Error sending emial to ${this.email}`))
     }
     next();
 })

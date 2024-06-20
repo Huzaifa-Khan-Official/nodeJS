@@ -1,7 +1,12 @@
 import express from "express";
 import cors from 'cors'
 import mongoose from "mongoose";
+import { ExpressAdapter } from "@bull-board/express"
+import { createBullBoard } from "@bull-board/api"
+import { BullAdapter } from "@bull-board/api/bullAdapter.js"
+import emailQueue from "./src/Queues/index.js";
 import serverConfig from "./src/configs/server.config.js";
+import redisConfig from "./src/configs/redis.config.js";
 import { DB_RETRY_LIMIT, DB_RETRY_TIMEOUT } from "./src/constants/constants.js";
 import { todoRoute } from "./src/routes/todo.routes.js";
 import { cronRoute } from "./src/routes/cron.routes.js";
@@ -43,6 +48,27 @@ async function connectToDB() {
         app.use("/user", userRoute)
         app.use("/todo", todoRoute)
         app.use("/cron", cronRoute)
+
+        // const serverAdapter = new ExpressAdapter();
+
+        // serverAdapter.setBasePath("/ui");
+
+        // createBullBoard({
+        //     queues: [new BullAdapter(emailQueue)],
+        //     serverAdapter
+        // });
+
+        // app.use("/ui", serverAdapter.getRouter());
+
+        const serverAdapter = new ExpressAdapter();
+        serverAdapter.setBasePath('/ui');
+
+        createBullBoard({
+            queues: [new BullAdapter(emailQueue)],
+            serverAdapter,
+        });
+
+        app.use('/ui', serverAdapter.getRouter());
 
     } catch (error) {
         console.log("couldn't connect to database ==>", error);
