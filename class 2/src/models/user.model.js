@@ -33,19 +33,19 @@ userSchema.pre("save", function (next) {
     if (!this.otp) {
         this.otp = generateOtp()
 
-        const payload = {
-            to: this.email,
-            subject: "Account Verification OTP",
-            text: `Your account verification token is ${this.otp}`
-        }
-
-        emailQueue.add({ ...payload });
-        // sendEmail({
+        // const payload = {
         //     to: this.email,
         //     subject: "Account Verification OTP",
         //     text: `Your account verification token is ${this.otp}`
-        // }).then(res => console.log(`Successfully sending emial to ${this.email}`))
-        //     .catch(err => console.log(`Error sending emial to ${this.email}`))
+        // }
+
+        // emailQueue.add({ ...payload });
+        sendEmail({
+            to: this.email,
+            subject: "Account Verification OTP",
+            text: `Your account verification token is ${this.otp}`
+        }).then(res => console.log(`Successfully sending emial to ${this.email}`))
+            .catch(err => console.log(`Error sending emial to ${this.email}`))
     }
     next();
 })
