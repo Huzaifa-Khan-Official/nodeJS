@@ -36,46 +36,44 @@ async function connectToDB() {
     }
 }
 
-(async () => {
-    try {
 
-        await connectToDB();
 
-        app.use(cors());
-        app.use(express.json());
-        dummyJob1.stop();
-        dummyJob2.stop();
-        app.use("/user", userRoute)
-        app.use("/todo", todoRoute)
-        app.use("/cron", cronRoute)
+connectToDB()
+    .then(res => console.log("Successfully connected to database"))
+    .catch(err => console.log("Error connecting to database"))
 
-        // const serverAdapter = new ExpressAdapter();
+app.use(cors());
+app.use(express.json());
+dummyJob1.stop();
+dummyJob2.stop();
+app.use("/user", userRoute)
+app.use("/todo", todoRoute)
+app.use("/cron", cronRoute)
 
-        // serverAdapter.setBasePath("/ui");
+// const serverAdapter = new ExpressAdapter();
 
-        // createBullBoard({
-        //     queues: [new BullAdapter(emailQueue)],
-        //     serverAdapter
-        // });
+// serverAdapter.setBasePath("/ui");
 
-        // app.use("/ui", serverAdapter.getRouter());
+// createBullBoard({
+//     queues: [new BullAdapter(emailQueue)],
+//     serverAdapter
+// });
 
-        const serverAdapter = new ExpressAdapter();
-        serverAdapter.setBasePath('/ui');
+// app.use("/ui", serverAdapter.getRouter());
 
-        createBullBoard({
-            queues: [new BullAdapter(emailQueue)],
-            serverAdapter,
-        });
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath('/ui');
 
-        app.use('/ui', serverAdapter.getRouter());
+createBullBoard({
+    queues: [new BullAdapter(emailQueue)],
+    serverAdapter,
+});
 
-    } catch (error) {
-        console.log("couldn't connect to database ==>", error);
-    }
-})()
+app.use('/ui', serverAdapter.getRouter());
 
 
 app.listen(PORT, () => {
     console.log(`Server is listening on ${PORT}`);
 })
+
+export default app;
