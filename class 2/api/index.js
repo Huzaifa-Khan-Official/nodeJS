@@ -4,15 +4,15 @@ import mongoose from "mongoose";
 import { ExpressAdapter } from "@bull-board/express"
 import { createBullBoard } from "@bull-board/api"
 import { BullAdapter } from "@bull-board/api/bullAdapter.js"
-import emailQueue from "./src/Queues/index.js";
-import serverConfig from "./src/configs/server.config.js";
-import redisConfig from "./src/configs/redis.config.js";
-import { DB_RETRY_LIMIT, DB_RETRY_TIMEOUT } from "./src/constants/constants.js";
-import { todoRoute } from "./src/routes/todo.routes.js";
-import { cronRoute } from "./src/routes/cron.routes.js";
-import { userRoute } from "./src/routes/user.routes.js";
-import { dummyJob1 } from "./src/jobs/dummy1.job.js";
-import { dummyJob2 } from "./src/jobs/dummy2.job.js";
+import emailQueue from "../src/Queues/index.js";
+import serverConfig from "../src/configs/server.config.js";
+import redisConfig from "../src/configs/redis.config.js";
+import { DB_RETRY_LIMIT, DB_RETRY_TIMEOUT } from "../src/constants/constants.js";
+import { todoRoute } from "../src/routes/todo.routes.js";
+import { cronRoute } from "../src/routes/cron.routes.js";
+import { userRoute } from "../src/routes/user.routes.js";
+import { dummyJob1 } from "../src/jobs/dummy1.job.js";
+import { dummyJob2 } from "../src/jobs/dummy2.job.js";
 
 const app = express();
 const PORT = serverConfig.PORT;
